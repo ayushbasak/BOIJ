@@ -1,13 +1,14 @@
 const express = require('express');
-const consumer = require('./services/data');
+const consumer = require('./services/consumer');
 const app = express();
-const bodyParser = require('body-parser')
+const ejs = require('ejs');
+const bodyParser = require('body-parser');
+const { response } = require('express');
 const PORT = 5000 | process.env.PORT;
 
 consumer.authenticate();
 
 app.use(bodyParser.urlencoded({extended: true}))
-
 app.listen(PORT, ()=>{
     console.log(`Server listening at PORT : ${PORT}`);
 });
@@ -24,14 +25,31 @@ app.route('/signup')
     .post((req,res)=>{
         console.log(req.body);
         consumer.insert(req.body)
-        res.send('Inserted Details!');
+        res.redirect('/home');
     })
 
 app.route('/signin')
     .get((req,res)=>{
         res.sendFile('/components/signin.html', {root: __dirname})
     })
-    .post((req,res)=>{
+    .post(async (req,res)=>{
         console.log(req.body);
-        res.send('Got Details!');
+        await consumer
+                .access(req.body.accountNumber, req.body.pin)
+                .then(response => val = response)
+                .catch((err)=> val = 'Invalid Details');
+        res.send(val);
+    })
+
+
+//Account Open
+app.use('/account/:id', (req,res)=>{
+    res.send("This is the id : " + req.params.id);
+})
+
+// Get DATA
+app.route('/data')
+    .get(async (req,res)=>{
+        await consumer.details().then(response => val = response)
+        res.send(val);
     })
