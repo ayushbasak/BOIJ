@@ -22,10 +22,30 @@ app.route('/signup')
     .get((req,res)=>{
         res.sendFile('/components/signup.html', {root: __dirname});
     })
-    .post((req,res)=>{
+    .post(async (req,res)=>{
         console.log(req.body);
-        consumer.insert(req.body)
-        res.redirect('/home');
+        await consumer.insert(req.body).then(response => text = response).catch((e)=> {console.log(e); text = {}});
+        text = 
+        `
+            <link rel="stylesheet" href='/index.css'>
+            <div class = "main">
+                <h1>Account Information: </h1>
+                <h5>Note: All information shown here will not be shown ever again! so write it down somewhere</h5>
+                <div class = "box">
+                    <p>
+                        Name: ${text.currName} <br>
+                        Consumer ID : ${text.currConsumerId} <br>
+                        Account Number: ${text.currAccountNo} <br>
+                        Account PIN: ${text.currPIN} <br>
+                        <form method = "GET" action = "/home">
+                            <button type = "submit">Back To Home</button>
+                        </form>
+                    </p>
+                </div>
+            </div>
+        `
+        res.send(text);
+        // res.redirect('/home');
     })
 
 app.route('/signin')

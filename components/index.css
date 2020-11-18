@@ -69,10 +69,10 @@ html,body{
 }
 .box button{
     box-shadow:
-    
     0 22.3px 17.9px rgba(0, 0, 0, 0.072),
     0 41.8px 33.4px rgba(0, 0, 0, 0.086);
     
+    width: 80%;
     padding:20px;
     margin:20px;
     cursor: pointer;

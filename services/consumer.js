@@ -41,17 +41,24 @@ const authenticate = ()=>{
 }
 
 const insert = async (body)=>{
+    let currConsumerId = generateRandom(9);
+    let currAccountNo = generateRandom(10);
+    let currPIN = generateRandom(4);
+    let currName = body.name.toUpperCase();
     await consumer.create({
-        consumerid: generateRandom(9),
-        name: body.name.toUpperCase(),
+        consumerid: currConsumerId,
+        name: currName,
         dob: body.dob,
         pincode: body.pincode,
         phone: body.phone,
-        accountno: generateRandom(10),
-        pin: generateRandom(4)
+        accountno: currAccountNo,
+        pin: currPIN
     })
-    .then(response => console.log(response))
-    .catch((err)=> console.log(err));
+    .then(response => {console.log(response); val = {currName, currAccountNo, currConsumerId, currPIN}})
+    .catch((err)=> {console.log(err); val = {}});
+
+    console.log(val);
+    return val;
 }
 
 const access = async (AccountId, PIN)=>{
