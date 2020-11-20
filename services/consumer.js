@@ -1,4 +1,5 @@
 const { response } = require('express');
+const balance = require('./balance');
 
 const sequelize = require('./database.js').sequelize;
 const DataTypes = require('./database').DataTypes;
@@ -41,6 +42,7 @@ const authenticate = ()=>{
 }
 
 const insert = async (body)=>{
+    balance.authenticate();
     let currConsumerId = generateRandom(9);
     let currAccountNo = generateRandom(10);
     let currPIN = generateRandom(4);
@@ -56,7 +58,7 @@ const insert = async (body)=>{
     })
     .then(response => {console.log(response); val = {currName, currAccountNo, currConsumerId, currPIN}})
     .catch((err)=> {console.log(err); val = {}});
-
+    balance.insert({accountno: currAccountNo, consumerid: currConsumerId});
     console.log(val);
     return val;
 }

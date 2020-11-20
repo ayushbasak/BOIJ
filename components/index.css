@@ -45,6 +45,14 @@ html,body{
     0 12.5px 10px rgba(0, 0, 0, 0.06);
 }
 
+table,th,  td{
+    scroll-behavior: auto;
+    padding:10px;
+    color:black;
+    font-size: 25px;
+    border: 2px solid black;
+    border-collapse: collapse;
+}
 /* Content Container */
 .box{
     display: flex;
