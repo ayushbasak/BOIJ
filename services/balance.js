@@ -56,7 +56,7 @@ const insert = async (body)=>{
     .catch(e => console.log(e))
 }
 
-const update = async ({value, accountno, method})=>{
+const update = async ({value, accountno, method, destination})=>{
     value = parseInt(value);
     let currBalance = 0;
     let responseText = '';
@@ -74,15 +74,39 @@ const update = async ({value, accountno, method})=>{
         else{
         currBalance -= value;
         await balance.update({balance: currBalance},{where: {accountno: accountno}})
-                .then(response=> responseText = 'DEBITED from account: ' + accountno + " with amount : " + value)
+                .then(response=> responseText = 'DEBITED from account: ' + accountno + " with amount : ₹" + value)
                 .catch(e => console.log(e))
         }
     }
     else if(method == 'CREDIT'){
         currBalance += value;
         await balance.update({balance: currBalance}, {where: {accountno: accountno}})
-                .then(response => responseText = 'CREDITED to account: ' + accountno +" with amount : " + value)
+                .then(response => responseText = 'CREDITED to account: ' + accountno +" with amount : ₹" + value)
                 .catch(e => console.log(e))
+    }
+    else if(method == 'TRANSFER'){
+        if(value > currBalance){
+            responseText = 'LOW BALANCE';
+        }
+        else {
+            let destinBalance  = 0;
+            await balance.findOne({ where: {accountno: destination}})
+                .then(response => destinBalance = parseInt(response.dataValues.balance))
+                .catch(e => responseText = 'Invalid Destination');
+            console.log(responseText);
+
+            currBalance -= value;
+            destinBalance += value;
+            if(responseText != 'Invalid Destination'){
+                await balance.update({balance: currBalance}, {where: {accountno: accountno}})
+                    .then(response => responseText = 'Transfered to Account : ' + destination + " an amount of : ₹" + value)
+                    .catch(e => console.log(e))
+                
+                await balance.update({balance: destinBalance}, {where: {accountno: destination}})
+                    .then(response => console.log(response))
+                    .catch(e => console.log(e))
+            }
+        }
     }
     console.log(responseText);
     return responseText;

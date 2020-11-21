@@ -59,7 +59,6 @@ const insert = async (body)=>{
     .then(response => {console.log(response); val = {currName, currAccountNo, currConsumerId, currPIN}})
     .catch((err)=> {console.log(err); val = {}});
     balance.insert({accountno: currAccountNo, consumerid: currConsumerId});
-    console.log(val);
     return val;
 }
 
@@ -71,11 +70,10 @@ const access = async (AccountId, PIN)=>{
         }
     })
     .then(response => val = response)
-    .catch((err)=> val = 'INVALID DETAILS');
+    .catch((err)=> val = 'INVALID CREDENTIALS');
 
     if(val.length === 0)
-        val = "INVALID DETAILS"
-    console.log(val);
+        val = "INVALID CREDENTIALS"
     return val;
 }
 

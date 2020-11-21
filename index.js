@@ -42,8 +42,11 @@ app.route('/signin')
         await consumer
                 .access(req.body.accountNumber, req.body.pin)
                 .then(response => val = response)
-                .catch((err)=> val = 'Invalid Details');
-        res.redirect(`/account/${val[0].dataValues.accountno}+${val[0].dataValues.pin}`);
+        console.log(val);
+        if(val.length > 1)
+            res.render('error.ejs', {error: val})
+        else
+            res.redirect(`/account/${val[0].dataValues.accountno}+${val[0].dataValues.pin}`);
     })
 
 
@@ -57,9 +60,16 @@ app.route('/account/:id')
 
         const accountno = req.params.id.toString().split('+')[0];
         let responseText = '';
-        await balance.update({value: req.body.amount, accountno: accountno, method: req.body.method}).then(response => responseText = response);
-        await transaction.insert({source: accountno, type: req.body.method, amount: req.body.amount, destination: 0}).then(response => console.log(response))
-        res.redirect('/home')
+        await balance.update({value: req.body.amount, accountno: accountno, method: req.body.method, destination: req.body.destination}).then(response => responseText = response);
+        console.log(responseText);
+        if(responseText == 'LOW BALANCE')
+            res.render('error.ejs',{error: responseText});
+        else if(responseText == 'Invalid Destination')
+            res.render('error.ejs', {error: `${responseText} : ${req.body.destination}`})
+        else{
+            await transaction.insert({source: accountno, type: req.body.method, amount: req.body.amount, destination: req.body.destination}).then(response => console.log(response))
+            res.redirect('/home')
+        }
     })
 
 // Get DATA
