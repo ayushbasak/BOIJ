@@ -23,13 +23,13 @@ CREATE TABLE BALANCE(
 );
 
 -- Transaction Table
-CREATE TABLE "TRANSACTION"(
+CREATE TABLE TRANSACTION(
     TransactionID INT,
     SourceAccount BIGINT NOT NULL,
     TYPE VARCHAR(10) NOT NULL,
     Date DATE NOT NULL,
     Amount INT NOT NULL,
     Destination BIGINT NOT NULL,
-    PRIMARY KEY (TransactionID),
+    PRIMARY KEY (TransactionID)
 );
 
